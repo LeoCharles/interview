@@ -81,12 +81,10 @@ box-sizing有三个值：border-box，padding-box，content-box
     left: 50%;
     top: 50%;
     margin:-50px 0 0 -50px; // 宽高的一半
-    // 或者使用 transform 适用于宽高不定
-    transform: (-50%, -50%);
   }
 ```
 
-+ 盒子宽高不定：绝对定位加 `margin: auto;`
++ 盒子宽高不定：绝对定位加 `margin: auto;` 或者使用 transform
 
 ```css
   .parent {
@@ -99,6 +97,15 @@ box-sizing有三个值：border-box，padding-box，content-box
     bottom: 0;
     left: 0;
     right: 0;
+  }
+
+  .son {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    left: 50%;
+    top: 50%;
+    transform: (-50%, -50%);
   }
 ```
 
@@ -135,6 +142,50 @@ BFC作用：
 + relative：相对定位，相对于自身原有位置进行偏移，仍处于标准文档流中。
 + absolute；绝对定位，相对于最近的已定位（非static）的祖先元素进行偏移，脱离标准文档流。
 + fixed：固定定位，相对于浏览器视窗定位，不随页面滚动，脱离标准文档流。
+
+### CSS动画
+
++ transition，过度动画：
+  + 位置-平移 left/right/margin/transform: translateX()
+  + 位-旋转 transform: rotate()
+  + 大小-缩放 transform: scale()
+  + 透明度 opacity
+  + 倾斜 transform: skewX()
+
++ @keyframe 关键帧动画
+
+```CSS
+@keyframes testAnimation {
+  0%   {background: red; left:0; top:0;}
+  25%  {background: yellow; left:200px; top:0;}
+  50%  {background: blue; left:200px; top:200px;}
+  75%  {background: green; left:0; top:200px;}
+  100% {background: red; left:0; top:0;}
+}
+div {
+  width: 100px;
+  height: 50px;
+  position: absolute;
+  animation-name: testAnimation;
+  animation-duration: 5s;
+}
+```
+
++ animation 逐帧动画
+
+```CSS
+.fadeIn {
+  animation: fadeIn .5s ease 1s both;
+}
+@keyframes fadeIn{
+  from{
+    opacity:0;
+  }
+  to{
+    opacity:1
+  }
+}
+```
 
 ### CSS3有哪些新特性
 
