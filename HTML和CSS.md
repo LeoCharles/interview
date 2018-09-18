@@ -146,11 +146,11 @@ BFC作用：
 ### CSS动画
 
 + transition，过度动画：
-  + 位置-平移 left/right/margin/transform: translateX()
-  + 位-旋转 transform: rotate()
-  + 大小-缩放 transform: scale()
-  + 透明度 opacity
-  + 倾斜 transform: skewX()
++ 位置-平移 left/right/margin/transform: translateX()
++ 位-旋转 transform: rotate()
++ 大小-缩放 transform: scale()
++ 透明度 opacity
++ 倾斜 transform: skewX()
 
 + @keyframe 关键帧动画
 
