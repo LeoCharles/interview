@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>极简版双向数据绑定</title>
+</head>
+<body>
+  <main>
+    <p>请输入：</p>
+    <input id="input" />
+    <p id="view"></p>
+  </main>
+
+  <script>
+    const input = document.getElementById("input");
+    const view = document.getElementById("view");
+    const obj = {};
+
+    // 使用 Object.defineProperty 劫持对象属性
+    Object.defineProperty(obj, 'text', {
+      get: function() {
+        console.log('get value')
+      },
+      set: function(newVal) {
+        input.value = newVal;
+        view.innerHTML = newVal;
+      }
+    })
+
+    input.addEventListener('keyup', function(e) {
+      obj.text = e.target.value;
+    })
+
+  </script>
+</body>
+</html>
