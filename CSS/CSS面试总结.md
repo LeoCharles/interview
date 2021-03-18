@@ -4,17 +4,10 @@
 
 box-sizing 有三个值：border-box，padding-box，content-box
 
-+ `content-box`（标准盒模型）：width 为 content，盒子整个宽度为 width、padding、border 的和。
-+ `border-box`（IE 盒模型）: width 为 content、padding border 的总和，因此盒子的宽度就为 width。
++ 标准盒模型（content-box）：width 为 content，盒子整个宽度为 width、padding、border 的和。
 
-Js 如何设置获取盒模型对应的宽高
++ IE 盒模型（border-box）: width 为 content、padding border 的总和，因此盒子的宽度就为 width。
 
-+ `DOM.style.width/height` (只适用于内联样式)
-+ `DOM.currentStyle.width/height`(IE 支持)
-+ `window.getComputedStyle(DOM).widht/height`(chrome、firefox)
-+ `DOM.getBoundingClientRect().widht/height`
-
-根据盒模型解释边距重叠
 
 ## BFC 及其应用
 
@@ -61,10 +54,10 @@ BFC(块级格式化上下文) 会生成一个独立的渲染区域，让处于 B
 }
 .son {
   position: absolute;
-  width: 100px;
-  height: 100px;
   left: 50%;
   top: 50%;
+  width: 100px;
+  height: 100px;
   margin: -50px 0 0 -50px; // 宽高的一半
 }
 ```
@@ -87,10 +80,10 @@ BFC(块级格式化上下文) 会生成一个独立的渲染区域，让处于 B
 /* transform */
 .son {
   position: absolute;
-  width: 100px;
-  height: 100px;
   left: 50%;
   top: 50%;
+  width: 100px;
+  height: 100px;
   transform: (-50%, -50%);
 }
 ```
@@ -99,10 +92,8 @@ BFC(块级格式化上下文) 会生成一个独立的渲染区域，让处于 B
 
 ```css
 .parent {
-  display: flex; // IE9以上
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 ```
-
-![水平垂直居中](../img/水平垂直居中.jpg)
