@@ -1,5 +1,13 @@
 # JavaScript 面试总结
 
+## 数据类型
+
+基本数据类型（7种）：null、undefined、boolean、number、string、symbol、bigint
+
+引用数据类型：普通对象Object、函数Function、数组Array、日期Date、正则ReqExp、数学Math
+
+可以通过 `Object.prototype.toString.call()`获得一个变量的正确类型。
+
 ## 执行上下文
 
 ## 作用域链
