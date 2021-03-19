@@ -34,18 +34,27 @@ hash 虽然出现在 URL 中，但不会被包括在 HTTP 请求中。因此，�
 
 每一次改变 hash，都会在浏览器的访问历史中增加一条记录。
 
-路由改变时会更新响应式数据 `_route` 的属性值，从而触发更新视图。
+路由改变时会更新响应式数据 `_route` 的属性值，从而触发视图更新。
 
 如果是在浏览器地址栏中直接输入改变路由，通过在 `window` 监听 `hashchange` 事件，调用 `replaceHash` 方法。
 
 ## history 模式
 
-history 模式，利用 HTML5 中 History API 的 `pushState()` 和 `replaceState()` 方法。
+history 模式，利用 HTML5 中 History 接口的 `pushState()` 和 `replaceState()` 方法。
 
-`pushState()` 和 `replaceState()` 对浏览器历史记录栈进行修改。
+这两个方法可以对浏览器历史记录栈进行修改。当他们执行时，虽然当前 URL 改变了，但浏览器不会立即发送请求该 URL。
 
-虽然当前 URL 改变了，但浏览器不会立即发送请求该 URL。
+URL 改变时，监听 `popstate` 事件，重新渲染视图。
 
-## history 模式的一个问题
+## history 模式的问题
 
+在用户手动输入 URL 后回车，或者刷新浏览器的时候。
+
+hash 模式下，仅 hash 符号之前的内容会被包含在请求中，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 404 错误。
+
+history 模式下，前端的 URL 必须和实际向后端发起请求的 URL 一致，如果后端缺少对所有路由的全覆盖，将返回 404 错误。
+
+所以，需要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。
+
+## vue-router有哪几种导航钩子
 
