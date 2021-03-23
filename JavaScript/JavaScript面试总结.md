@@ -381,16 +381,26 @@ class Child extends Parent {
 
 JavaScript 有一个主线程和调用栈。所有的任务都会放到调用栈中等待主线程来执行。
 
-主线程自上而下执行代码，同步任务直接进入主线程被执行。
+Event Loop 执行过程如下：
 
-遇到异步任务进入 `Event Table` 并注册相对应的回调函数，异步任务完成后，`Event Table` 将这个函数移入 `Event Queue`。
+（1）、一开始整个脚本 script 作为一个宏任务执行。
 
-主线程任务执行完成以后，从 `Event Queue` 中读取任务，进入到主线程去执行。
+（2）、执行过程中，同步代码直接执行，宏任务进入宏任务队列，微任务进入微任务队列。
 
-上述过程不断循环就是事件循环。
+（3）、当前宏任务执行完出队，检查微任务列表，有则依次执行，直到全部执行完毕。
 
-JavaScript 的任务不仅仅分为同步任务和异步任务，同时从另一个维度，也分为宏任务(MacroTask)和微任务(MicroTask)。
+（4）、执行完本轮的宏任务，回到步骤 （2），依次循环，直到宏任务和微任务队列为空。
 
-所有的同步任务代码都是宏任务, setTimeout、setInterval、I/O、UI Rendering 等都是宏任务。
+宏任务：script、setTimeout、setInterval、setImmediate、I/O、UI rendering
 
-微任务包括：Process.nextTick、Promise.then (还有 catch 和 finally )。
+微任务：
+
+MutationObserver
+
+Promise.then()/catch()
+
+以 Promise 为基础开发的其他技术，例如 fetch API
+
+V8 的垃圾回收过程
+
+Node 独有的 process.nextTick

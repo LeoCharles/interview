@@ -13,8 +13,6 @@
 ## Vue
 
 + [Vue面试总结](./Vue/Vue面试总结.md)
-+ [vue-router面试总结](./Vue/vue-router面试总结.md)
-+ [Vuex面试总结](./Vue/Vuex面试总结.md)
 
 ## React
 

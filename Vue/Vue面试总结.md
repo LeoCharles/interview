@@ -26,9 +26,9 @@ SEO 难度较大。（SEO优化）
 
 在组件初始化时，通过 `Object.defineProperty` 方法给 `data` 选项中的所有属性加上 `getter/setter`。
 
-当 `render` 方法被执行的时候，会用到 `data` 里的属性值，此时会触发 `getter` 函数, Vue 会去记录所有依赖此属性值的组件，完成依赖收集。
+当 `render` 方法被执行的时候，会用到 `data` 里的属性值，此时会触发 `getter` 函数, Vue 会去记录所有依赖此属性值的节点，完成依赖收集。
 
-当 `data` 里的属性值发生变化后，会触发 `setter` 函数，此时 Vue 会去通知所有依赖于此属性值的组件去调用他们的 `render` 函数进行更新。
+当 `data` 里的属性值发生变化后，会触发 `setter` 函数，此时 Vue 会去通知所有依赖于此属性值的节点进行更新。
 
 Vue3 改用代理 `Proxy` 替代 `Object.defineProperty` 方法实现数据劫持。
 
@@ -71,9 +71,10 @@ key 是为 Vue 中 `vnode` 的唯一标记，通过这个 key，我们的 diff �
 更准确：带 key 就不是就地复用了，在 sameNode 函数 a.key === b.key 对比中可以避免就地复用的情况。所以会更加准确。
 
 更快速：利用 key 的唯一性生成 map 对象来获取对应节点，比遍历方式更快。
+
 ## 组件生命周期
 
-Vue 实例有一个完整的生命周期，包括创建、初始化数据、编译模版、挂载 Dom、初始化渲染、数据更新、重新渲染、卸载。
+Vue 实例有一个完整的生命周期，包括创建、挂载 Dom、重新渲染、卸载。
 
 `beforeCreate`：组件实例被创建之前调用。
 
@@ -87,13 +88,13 @@ Vue 实例有一个完整的生命周期，包括创建、初始化数据、编�
 
 `updated`：组件数据更新之后调用。
 
-`activited`：`<keep-alive>` 组件专属，组件被激活时调用。
-
-`deadctivated`：`<keep-alive>` 组件专属，组件被销毁时调用。
-
 `beforeDestroy`：组件销毁前调用。
 
 `destroyed`：组件销毁后调用。
+
+`activited`：`<keep-alive>` 组件专属，组件被激活时调用。
+
+`deadctivated`：`<keep-alive>` 组件专属，组件被销毁时调用。
 
 ## 父子组件生命周期函数执行顺序
 
@@ -104,12 +105,6 @@ Vue 实例有一个完整的生命周期，包括创建、初始化数据、编�
 父组件更新：父组件beforeUpdate，父组件updated
 
 销毁：先是父组件beforeDestroy，然后子组件beforeDestroy、destroyed，最后父组件destroyed
-
-## 哪个生命周期内调用异步请求
-
-`created`、`beforeMount`、`mounted` 这三个钩子函数中 `data` 已经创建，都可以进行异步请求，可以将服务端端返回的数据进行赋值。
-
-推荐在 `created` 中调用异步请求，能更快获取到服务端数据，减少页面 loading 时间。服务端渲染不支持 `beforeMount` 、`mounted` 钩子函数。
 
 ## 组件通信方式
 
@@ -187,3 +182,201 @@ Vue 无法检测到对象属性的添加或删除。但是 Vue 提供了 `Vue.s
 
 在修改数据之后立即使用这个方法，可以获取更新后的 DOM。
 
+## vue-router 导航守卫
+
+导航守卫主要用来通过跳转或取消的方式守卫导航。分为全局导航守卫, 单个路由独享的守卫和组件级的守卫。
+
+全局导航守卫：
+
+`router.beforeEach((to, from, next) => {})`：全局前置守卫，确保 next 被调用。
+
+`router.afterEach((to, from) => {})`：全局后置钩子。
+
+`router.beforeResolve`：全局解析守卫。
+
+路由独享的守卫：可以在路由表上直接定义 `beforeEnter` 守卫。
+
+组件内的守卫：
+
+`beforeRouteEnter(to, from, next)`：在渲染该组件的对应路由被 confirm 前调用，不能获取组件实例的 this。
+
+`beforeRouteUpdate(to, from, next)`：在当前路由改变，但是该组件被复用时调用，如：带有动态参数的路径 /foo/:id。
+
+`beforeRouteLeave(to, from, next)`：导航离开该组件的对应路由时调用，可以访问组件实例的 this。
+
+## 完整的导航解析流程
+
+（1）、导航被触发
+
+（2）、在失活的组件里调用 beforeRouteLeave 守卫
+
+（3）、调用全局的 beforeEach 守卫
+
+（4）、在重用的组件里调用 beforeRouteUpdate 守卫
+
+（5）、在路由配置里调用 beforeEnter
+
+（6）、解析异步路由组件。
+
+（7）、在被激活的组件里调用 beforeRouteEnter
+
+（8）、调用全局的 beforeResolve 守卫
+
+（9）、导航被确认。
+
+（10）、调用全局的 afterEach 钩子
+
+（11）、触发 DOM 更新
+
+（12）、调用 beforeRouteEnter 守卫中传给 next 的回调函数，创建好的组件实例会作为回调函数的参数传入
+
+## vue-router 实现原理
+
+vue-router 插件通过 `Vue.mixin()` 方法，全局注册一个混入。
+
+该混入在 `beforeCreate` 钩子中定义了响应式的 `_route` 属性。
+
+当 `_route` 值改变时，会自动调用 Vue 实例的 `render()` 方法，更新视图。
+
+## vue-router 使用步骤
+
+1. 定义路由组件。
+
+2. 定义路由表 `routes`，每一个路由映射一个路由组件。
+
+3. 创建 `router` 实例，`const router = new VueRouter({routes: routes})`。
+
+4. 注入路由，挂载根实例，`const app = new Vue({router: router}).$mount('#app')`。
+
+5. 使用 `<router-link>` 组件来导航，路由匹配到的组件将渲染在 `<router-view>` 组件。
+
+6. 组件内通过 `this.$router` 访问路由器，也可以通过 `this.$route` 访问当前路由。
+
+## 前端路由“更新视图但不重新请求页面”原理
+
+### hash 模式
+
+vue-router 默认 hash 模式，利用 URL 中的 hash。
+
+`#` 符号本身以及它后面的字符称之为 hash，可通过 `window.location.hash` 属性读取。
+
+hash 虽然出现在 URL 中，但不会被包括在 HTTP 请求中。因此，改变 hash 不会重新加载页面。
+
+每一次改变 hash，都会在浏览器的访问历史中增加一条记录。
+
+路由改变时会更新响应式数据 `_route` 的属性值，从而触发视图更新。
+
+如果是在浏览器地址栏中直接输入改变路由，通过在 `window` 监听 `hashchange` 事件，调用 `replaceHash` 方法。
+
+### history 模式
+
+history 模式，利用 HTML5 中 History 接口的 `pushState()` 和 `replaceState()` 方法。
+
+这两个方法可以对浏览器历史记录栈进行修改。当他们执行时，虽然当前 URL 改变了，但浏览器不会立即发送请求该 URL。
+
+URL 改变时，监听 `popstate` 事件，重新渲染视图。
+
+## history 模式的问题
+
+在用户手动输入 URL 后回车，或者刷新浏览器的时候。
+
+hash 模式下，仅 hash 符号之前的内容会被包含在请求中，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 404 错误。
+
+history 模式下，前端的 URL 必须和实际向后端发起请求的 URL 一致，如果后端缺少对所有路由的全覆盖，将返回 404 错误。
+
+所以，需要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。
+
+## Vuex
+
+Vuex 是一种状态管理模式，采用集中式存储管理所有组件的状态，用一个对象包含全部应用层级状态。
+
+`State`：数据源，通过计算属性来使用。当组件需要获取多个状态的时候，使用 mapState 辅助函数帮助生成计算属性。
+
+`Getter`：从 Store 中获取数据，派生出新的数据（类似计算属性），mapGetters 辅助函数将 store 中的 getter 映射到计算属性。
+
+`Mutation`：改变 store 中状态的唯一方法就是提交 mutation（类似事件），mutation 必须是同步函数。可以用 mapMutations 辅助函数将组件中的 methods 映射为 store.commit 调用。
+
+`Action`：用于提交 mutation，而不是直接变更状态，可以包含异步操作，通过 store.dispatch 方法触发。可以用 mapActions 辅助函数将组件的 methods 映射为 store.dispatch 调用。
+
+`Module`：将单一的 Store 拆分为多个模块，每个模块拥有自己的 state、mutation、action、getter。
+
+Vuex 管理数据的流程：
+
+（1）、通过 `dispatch()` 去分发一个 action。
+
+（2）、在 action 中执行异步操作获取接口数据，获取数据后提交 mutation。
+
+（3）、在 mutation 中更新 state 数据。
+
+（4）、在组件的计算属性中返回 state 数据，store 更新时，重新求取计算属性，触发视图更新。
+
+## Axios
+
+Axios 是一个基于 Promise 的 HTTP 客户端，同时支持浏览器和 Node.js 环境。在浏览器中基于 XMLHttpRequests 实现，在 Nodejs 中基于 http 模块实现。
+
+Axios 可以拦截请求和响应，转换请求和响应数据，支持防御 CSRF（跨站请求伪造） 攻击。
+
+### 请求响应拦截
+
+通过 `axios.interceptors.request.use()` 设置请求拦截，在请求发送前统一执行某些操作。
+
+比如在请求头中添加 token 字段。
+
+```js
+axios.interceptors.request.use(function (config) {
+  // 在发送请求之前做些什么
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
+```
+
+通过 `axios.interceptors.response.use()`设置响应拦截，在接收到服务器响应后统一执行某些操作。
+
+比如发现响应状态码为 401 时，自动跳转到登录页。
+
+```js
+axios.interceptors.response.use(function (response) {
+  // 对响应数据做点什么
+  return response;
+}, function (error) {
+  // 对响应错误做点什么
+  return Promise.reject(error);
+});
+```
+
+### 防御跨站请求伪造
+
+跨站请求伪造（Cross-site request forgery），通常缩写为 CSRF 或 XSRF，是一种挟制用户在当前已登录的 Web 应用程序上执行非本意的操作的攻击方法。
+
+攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己曾经认证过的网站并运行一些操作，如发邮件、转账、购买商品等操作。由于浏览器曾经认证过，所以被访问的网站会认为是真正的用户操作而去运行。
+
+防御措施：
+
+（1）、检查 HTTP 头的 Referer 字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，Referer 字段应和请求的地址位于同一域名下。
+
+（2）、请求都携带一个 CSRF 攻击者无法获取到的 token。将 token 设置在 Cookie 中，在提交请求时提交 Cookie，服务端接收到请求后，再进行对比校验。
+
+Axios 提供了 `xsrfCookieName` 和 `xsrfHeaderName` 两个属性来分别设置 CSRF 的 Cookie 名称和 HTTP 请求头的名称。
+
+### 取消请求
+
+取消请求主要有两个场景：一个请求发送了多次，需要取消之前的请求。路由切换时，需要取消上个路由中未完成的请求。
+
+通过 `axios.CancelToken.source` 生成取消令牌 token 和取消方法 cancel。
+
+```js
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+
+axios.get('/user/12345', {
+  cancelToken: source.token
+})
+
+source.cancel();
+```
+
+当创建请求时传递 `{cancelToken : source.token}`, 因为 `cancelToken` 内部有一个 `Promise` 对象，所以 axios 就只需要实现 then 回调函数就行。
+
+当手动执行 `source.cancel()` 时，执行了 `Promise.resolve()` ,这个时候 `then` 回调函数就会被触发，回调函数中使用了 `XMLHttpRequest.abort()` 中断请求，同时将回调函数的结果作为异常抛出给用户。、

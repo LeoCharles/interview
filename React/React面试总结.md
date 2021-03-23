@@ -1,5 +1,20 @@
 # React 面试总结
 
+## React 和 Vue 的区别
+
+相同点：数据驱动视图、虚拟 DOM、组件化
+
+不同点：
+
+React 使用 JSX 生成 HTML。Vue 使用模板。
+
+React 是单向数据流，手动通过 setState 改变状态。Vue 是响应式数据，不需要手动改变状态。
+
+React 中的事件是封装过的事件，事件触发的对象为 document。Vue 中的事件是原生 DOM 事件。
+
+## JSX
+
+
 ## React 生命周期
 
 当组件实例被创建并插入 DOM 中时，其生命周期调用顺序如下：
@@ -73,9 +88,9 @@
 
 ### 函数组件
 
-函数组件是一个纯函数，它接收一个 props 返回一个 react 元素。
+函数组件是一个纯函数，接收 props，返回一个 JSX。
 
-函数组件中不能使用 setState，也没有生命周期。
+函数组件没有生命周期，没有 state，不能用 setState。
 
 ### 类组件
 
@@ -87,15 +102,27 @@
 
 在表单元素中把 value 属性设置为组件的 state，监听到 change 事件时，通过 setState() 来更新 value，这种表单组件称为受控组件。
 
-### 高阶组件
+### 异步组件
+
+React.lazy 
+
+React.Suspense
+
+## 如何抽离多个组件的公共逻辑
 
 高阶组件（HOC）是 React 中用于复用组件逻辑的一种技巧。
 
 高阶组件是参数为组件，返回值为新组件的函数。
 
+Render Props
+
 ## React 事件处理
 
-React 事件对象是合成事件，没有浏览器兼容问题。
+React 事件对象是合成事件，标准化了事件对象，没有浏览器兼容问题。
+
+React 事件触发的对象为 document，绑定元素为当前元素。
+
+Vue  Event 是原生，事件被挂载到当前元素和 DOM 事件一样。
 
 在 JavaScript 中，class 的方法默认不会绑定 this，因此需要手动绑定 this。
 
@@ -160,6 +187,6 @@ class LoggingButton extends React.Component {
 
 useContext 可以不使用组件嵌套就可以订阅 React 的 Context。
 
-## react-redux 是如何工作的
+## Redux 单项数据流
 
 
