@@ -32,7 +32,7 @@ SEO 难度较大。（SEO优化）
 
 Vue3 改用代理 `Proxy` 替代 `Object.defineProperty` 方法实现数据劫持。
 
-监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 Object.defineProperty() 给属性都加上 setter 和 getter。当给某个属性赋值时，就会触发 setter，就能监听到数据的变化。
+监听器 Observer：对数据对象进行遍历，包括子属性对象的属性，利用 `Object.defineProperty()` 给属性都加上 setter 和 getter。当给某个属性赋值时，就会触发 setter，就能监听到数据的变化。
 
 解析器 Compile：解析 Vue 模板指令，将模板中的变量都替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，调用更新函数进行数据更新。
 
@@ -50,7 +50,7 @@ Vue3 改用代理 `Proxy` 替代 `Object.defineProperty` 方法实现数据劫�
 
 `Proxy` 返回的是一个新对象，可以只操作新的对象达到目的，而 `Object.defineProperty` 只能遍历对象属性直接修改。
 
-## 单项数据流
+## 单向数据流
 
 父组件通过 `props` 传递数据给子组件，父组件数据更新时，子组件接收的 `props` 会更新，但是不能在子组件中直接更新 `props`，会触发警告。
 
@@ -98,13 +98,17 @@ Vue 实例有一个完整的生命周期，包括创建、挂载 Dom、重新渲
 
 ## 父子组件生命周期函数执行顺序
 
-加载渲染：先是父组件beforeCreate、created 、beforeMount，然后子组件beforeCreate、created、beforeMount 、mounted，最后父组件mounted
+加载渲染：父组件要等子组件都挂载完成，自己才能挂载完成。
 
-子组件更新：先是父组件beforeUpdate，然后子组件beforeUpdate、updated，最后父组件updated
+父beforeCreate、created 、beforeMount --> 子beforeCreate、created、beforeMount 、mounted --> 父mounted
 
-父组件更新：父组件beforeUpdate，父组件updated
+更新过程：父组件要等子组件更新完毕，自己才能更新完毕。
 
-销毁：先是父组件beforeDestroy，然后子组件beforeDestroy、destroyed，最后父组件destroyed
+父beforeUpdate --> 子beforeUpdate、updated --> 父updated
+
+销毁过程：父组件要等子组件销毁完成，自己才能销毁完成。
+
+父beforeDestroy --> 子beforeDestroy、destroyed --> 父destroyed
 
 ## 组件通信方式
 
@@ -122,15 +126,15 @@ Vue 实例有一个完整的生命周期，包括创建、挂载 Dom、重新渲
 
 ## v-model
 
-`v-model` 指令用在 input、select、textarea等表单元素上创建双向数据绑定。
+v-model 本质是 v-bind 和 v-on 的语法糖，默认使用名为 value 的 prop 和名为 input 的事件，在表单元素上创建双向数据绑定。
 
-`v-model` 可以看成是语法糖，不同的表单元素使用不同的属性和事件。
+不同的表单元素使用不同的属性和事件：
 
 text 和 textarea 元素使用 value 属性和 input 事件。
 
-checkbox 和 radio 使用 checked 属性和 change 事件。
-
 select 使用 value 属性和 change 事件。
+
+checkbox 和 radio 使用 checked 属性和 change 事件。
 
 可以通过修改组件 `model` 选项的 `prop` 和 `event` 属性来进行自定义。
 
