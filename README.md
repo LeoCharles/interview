@@ -25,7 +25,6 @@
 ## 工程化
 
 + [webpack总结](./工程化/webpack总结.md)
-+ [babel总结](./工程化/babel总结.md)
 
 ## 编程题
 
