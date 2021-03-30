@@ -23,7 +23,7 @@ const { resolve } = require('path');
 // 引入插件
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-// webpack 配置
+// webpack 开发环境配置
 module.exports = {
   // 入口文件
   entry: './src/main.js',
@@ -35,6 +35,9 @@ module.exports = {
     // 输出文件名
     filename: 'index.js'
   },
+
+  // 模式：'development'
+  mode: 'development',
 
   // loader 的配置
   module: {
@@ -84,17 +87,13 @@ module.exports = {
         }
       },
       {
-        // 处理媒体文件资源
-        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
-        loader: 'url-loader',
-        name: '[hash:10].[ext]'
+        // 处理其他资源
+        exclude: /\.(js|json|html|css|less|png|jpe?g|gif|svg)$/,
+        loader: 'file-loader',
+        options: {
+          name: '[hash:10].[ext]'
+        }
       },
-      {
-        // 处理字体图标资源
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        name: '[hash:10].[ext]'
-      }
     ]
   },
 
@@ -108,16 +107,15 @@ module.exports = {
     })
   ],
 
-  // 模式：'development' 和 'production'
-  mode: 'development',
-
   // 开发服务器，用于自动编译，自动刷新浏览器，需要下载 webpack-dev-server
   devServer: {
     contentBase: resolve(__dirname, 'dist'),
     // 启动 gzip 压缩
     compress: true,
     // 端口号
-    port: 3000
+    port: 3000,
+    // 打开默认浏览器
+    open: true
   }
 }
 ```
