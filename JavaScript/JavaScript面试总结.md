@@ -377,6 +377,10 @@ class Child extends Parent {
 }
 ```
 
+ES5 的继承实质上是先创建子类的实例对象，然后再将父类的方法添加到 this 上（Parent.call(this)）。
+
+ES6 的继承实质上是先创建父类的实例对象 this（所以必须先调用父类的 super()方法），然后再用子类的构造函数修改this。
+
 ## 事件循环
 
 JavaScript 有一个主线程和调用栈。所有的任务都会放到调用栈中等待主线程来执行。
